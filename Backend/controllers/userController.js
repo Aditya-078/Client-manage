@@ -2,8 +2,10 @@ const asyncHandler = require("express-async-handler")
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const bcrypt = require("bcryptjs");
-
+const bcrypt = require("bcryptjs")
+const Token = require("../models/tokenModel");
+const crypto = require("crypto");
+const sendEmail = require("../utils/sendEmail")
 
 const generateToken = (id) => {
     return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: "1d"})
@@ -39,10 +41,6 @@ const registerUser = asyncHandler( async  (req, res) =>
         throw new Error("Email has already been registered")
     }
      
-    
-
-
-
     //create new user
     const user = await User.create({
         name,
@@ -55,7 +53,7 @@ const registerUser = asyncHandler( async  (req, res) =>
     const token = generateToken(user._id)
     
     //Send HTTP-only cookie
-    if(passwordIsCorrect){
+    
     res.cookie("token",token, {
         path:"/",
         httpOnly: true,
@@ -64,11 +62,7 @@ const registerUser = asyncHandler( async  (req, res) =>
         secure: true
     })
 
-    }
-
-
-
-
+    
 
     if (user) {
         const { _id, name, email, photo, phone, bio } = user;
@@ -227,6 +221,107 @@ const loginStatus = asyncHandler((async (req, res) => {
 
 }))
 
+//Change Password
+
+const changePassword = asyncHandler(async ( req, res )=> {
+   const user = await User.findById(req.user._id)
+
+   const{oldPassword, password} = req.body
+   
+   if(!user){
+    res.status(400)
+    throw new Error("User not found, please Signup")
+   }
+   
+   //Validate
+   
+   if(!oldPassword || !password){
+    res.status(400)
+    throw new Error("Please add old and new password")
+   }
+
+   // check if old password matches pass in DB
+
+   const passwordIsCorrect = await bcrypt.compare(oldPassword, user.password)
+
+   //Save new Password
+   if(user && passwordIsCorrect) {
+    user.password = password
+    await user.save()
+    res.status(200).send("Password changed successfully")
+
+   }else{
+    res.status(400)
+    throw new Error("old password is incorrect")
+   }
+
+})
+
+//Forgot Password
+
+const forgotPassword = asyncHandler( async ( req, res ) => {
+   const {email} = req.body
+   const user = await User.findOne({email})
+
+
+   if(!user){
+    res.status(404)
+    throw new Error("User does not  exists")
+   }
+   //Delete Token if it exists in DB
+   let token = await Token.findOne({userId: user._id})
+   if (token){
+    await token.deleteOne()
+   }
+
+
+   //Create Reset Token
+   let resetToken = crypto.randomBytes(32).toString("hex") + user._id
+
+   console.log(resetToken);
+   
+
+   //Hash token before saving to DB
+   const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex")
+   
+
+   //Save Token to DB
+   await new Token({
+    userId: user._id,
+    token: hashedToken,
+    createdAt: Date.now(),
+    expiresAt: Date.now() + 30 * (60 * 1000) // 30 mins
+   }).save()
+
+   //Construct Reset URL
+   const resetUrl = `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`
+
+   // Reset E-Mail
+   const message = `
+     <h2> Hello ${user.name}</h2>
+     <h3>Please use the URL below to reset password.</h3>
+     <h4>The reset link is valid for 30 mins.</h4>
+
+     <a href="${resetUrl}" clicktracking = off>${resetUrl}</a>
+
+     <p>Regards..</p>
+     <p>Team Magica</p>
+   `;
+   const subject = "Password Reset Request"
+   const send_to = user.email
+   const sent_from = process.env.EMAIL_USER
+
+   try{
+      await sendEmail(subject, message, send_to, sent_from,)
+          res.status(200).json({success: true, message:
+          "Reset Email Sent"})
+   } catch (error){
+        res.status(500)
+        throw new Error("Email not sent , please try again")
+   }
+  
+
+})
 
 module.exports = {
     registerUser,
@@ -235,4 +330,6 @@ module.exports = {
     getUser,
     loginStatus,
     updateUser,
+    changePassword,
+    forgotPassword,
 };
