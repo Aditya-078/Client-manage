@@ -1,10 +1,12 @@
 const express = require("express");
-const expressAsyncHandler = require("express-async-handler");
-const protect = require("../middleWare/authMiddleware");
 const router = express.Router();
+const protect = require("../middleWare/authMiddleware")
+const {
+  createProduct,
+  
+} = require("../controllers/productController");
 
 
-
-router.post("/", protectct, createProduct)
+router.post("/", protect, createProduct);
 
 module.exports = router;
