@@ -1,21 +1,24 @@
-import React, { useState } from 'react'
-import Card from '../../components/card/Card'
-import styles from './auth.module.scss'
-import { TiUserAddOutline } from 'react-icons/ti'
-import { Link } from 'react-router-dom'
-import {toast} from "react-toastify"
-import { registerUser, ValidateEmail } from '../../services/authService'
-import { SET_LOGIN, SET_NAME } from "../../redux/features/auth/authSlice";
+import React, { useState } from "react";
+import styles from "./auth.module.scss";
+import { TiUserAddOutline } from "react-icons/ti";
+import Card from "../../components/card/Card";
+import { toast } from "react-toastify";
+import { registerUser } from "../../services/authService";
 import { useDispatch } from "react-redux";
-import {  useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { SET_LOGIN, SET_NAME } from "../../redux/features/auth/authSlice";
+import { validateEmail } from "../../services/authService";
 
 
-const  initialState= {
-  name:"",
-  email:"",
-  password:"",
-  password2:"",
-}
+
+
+
+const initialState = {
+  name: "",
+  email: "",
+  password: "",
+  password2: "",
+};
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -38,7 +41,7 @@ const Register = () => {
     if (password.length < 6) {
       return toast.error("Passwords must be up to 6 characters");
     }
-    if (!ValidateEmail(email)) {
+    if (!validateEmail(email)) {
       return toast.error("Please enter a valid email");
     }
     if (password !== password2) {
@@ -52,21 +55,20 @@ const Register = () => {
     };
     setIsLoading(true);
     try {
-      const data = await registerUser (userData);
-       console.log(data);
-      
-      
+      const data = await registerUser(userData);
+      // console.log(data);
+      await dispatch(SET_LOGIN(true));
+      await dispatch(SET_NAME(data.name));
+      navigate("/dashboard");
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      console.log(error.message)
     }
   };
 
-
   return (
     <div className={`container ${styles.auth}`}>
-      
+      {isLoading}
       <Card>
         <div className={styles.form}>
           <div className="--flex-center">
@@ -82,7 +84,6 @@ const Register = () => {
               name="name"
               value={name}
               onChange={handleInputChange}
-              
             />
             <input
               type="email"
@@ -121,7 +122,7 @@ const Register = () => {
         </div>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;
