@@ -10,11 +10,27 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import axios from "axios";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { getLoginStatus } from "./services/authService";
+import { SET_LOGIN } from "./redux/features/auth/authSlice";
+import AddProduct from "./pages/addProduct/AddProduct";
+
 
 axios.defaults.withCredentials = true;
 
 function App() {
-  return (
+  const dispatch = useDispatch();
+
+  useEffect(() => {          //Keep login status checked after refresh
+    async function loginStatus () {
+      const status = await getLoginStatus()
+      dispatch(SET_LOGIN(status))
+    }
+    loginStatus()
+  }, [dispatch])
+ 
+   return (
     <BrowserRouter>
     <ToastContainer />
       <Routes>
@@ -32,6 +48,21 @@ function App() {
           </Sidebar>
         } 
       />
+
+      <Route 
+      path='/add-product' 
+      element={
+          <Sidebar>
+            <Layout>
+              <AddProduct />
+            </Layout>
+          </Sidebar>
+        } 
+      />
+
+
+
+
     </Routes>
     
   </BrowserRouter>
