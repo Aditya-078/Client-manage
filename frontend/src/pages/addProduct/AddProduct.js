@@ -1,9 +1,9 @@
-import React, { useState, useSelector } from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import ProductForm from '../../components/productForm/ProductForm'
 import { createProduct, selectIsLoading } from '../../redux/features/product/productSlice'
-
+import Loader from "../../components/loader/Loader";
 
 const initialState = {
   name: "",
@@ -22,7 +22,6 @@ const AddProduct = () => {
   const [imagePreview, setImagePreview] = useState(null)
   const [description, setDescription] = useState("")
   
-  const isLoading = useSelector(selectIsLoading)
 
   const {name, category, price, quantity} = product
   
@@ -65,6 +64,7 @@ const AddProduct = () => {
 
   return (
     <div>
+      
       <h3 className='--mt'>Add New Product</h3>
       <ProductForm 
        product={product}
