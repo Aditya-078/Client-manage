@@ -3,15 +3,11 @@ import styles from "./auth.module.scss";
 import { TiUserAddOutline } from "react-icons/ti";
 import Card from "../../components/card/Card";
 import { toast } from "react-toastify";
-import { registerUser } from "../../services/authService";
+import { registerUser, validateEmail } from "../../services/authService";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { SET_LOGIN, SET_NAME } from "../../redux/features/auth/authSlice";
-import { validateEmail } from "../../services/authService";
-
-
-
-
+import Loader from "../../components/loader/Loader";
 
 const initialState = {
   name: "",
@@ -68,7 +64,7 @@ const Register = () => {
 
   return (
     <div className={`container ${styles.auth}`}>
-      {isLoading}
+      {isLoading && <Loader />}
       <Card>
         <div className={styles.form}>
           <div className="--flex-center">

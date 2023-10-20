@@ -3,62 +3,48 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const userRoute = require("./routes/userRoute") 
-const productRoute = require("./routes/productRoute") 
-const contactRoute = require("./routes/contactRoute") 
-const errorHandler = require("./middleWare/errorMiddleware")
-const cookieParser = require("cookie-parser")
-const path = require("path")
+const userRoute = require("./routes/userRoute");
+const productRoute = require("./routes/productRoute");
+const contactRoute = require("./routes/contactRoute");
+const errorHandler = require("./middleWare/errorMiddleware");
+const cookieParser = require("cookie-parser");
+const path = require("path");
 
+const app = express();
 
-
-const app = express()
-
-//Middleware
-
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors({
-    origin: ["http://localhost:3000",
-    "https://infispec-app.vercel.app" 
-    ],
-    credentials: true
-})
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://pinvent-app.vercel.app"],
+    credentials: true,
+  })
 );
 
-app.use('/uploads', express.static(path.join(__dirname, "uploads")))
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-//Routes Middleware
-app.use("/api/users", userRoute)
+// Routes Middleware
+app.use("/api/users", userRoute);
 app.use("/api/products", productRoute);
 app.use("/api/contactus", contactRoute);
 
+// Routes
+app.get("/", (req, res) => {
+  res.send("Home Page");
+});
 
-
-
-//Routes
-app.get('/', (req, res) => {
-    res.send(" Home Page ")
-})
-
-const PORT = process.env.PORT || 5000;
-
-//Error Middleware
+// Error Middleware
 app.use(errorHandler);
-
-
-
-//Connect to mongo db and start server
-mongoose 
-    .connect(process.env.MONGO_URI)
-    .then(() => {
-       
-        app.listen(PORT, () => {
-            console.log(`Server Running on ${PORT}`)
-        })
-
-    })
-
-    .catch((err) => console.log(err));
+// Connect to DB and start server
+const PORT = process.env.PORT || 5000;
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server Running on port ${PORT}`);
+    });
+  })
+  .catch((err) => console.log(err));
