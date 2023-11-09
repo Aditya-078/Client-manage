@@ -5,10 +5,10 @@ const cloudinary = require("cloudinary").v2;
 
 // Create Prouct
 const createProduct = asyncHandler(async (req, res) => {
-  const { name, sku, category, quantity, price, description } = req.body;
+  const { name, sku, category, quantity, price, description, tags } = req.body;
 
   //   Validation
-  if (!name || !category || !quantity || !price || !description) {
+  if (!name || !category || !quantity || !price || !description ) {
     res.status(400);
     throw new Error("Please fill in all fields");
   }
@@ -20,7 +20,7 @@ const createProduct = asyncHandler(async (req, res) => {
     let uploadedFile;
     try {
       uploadedFile = await cloudinary.uploader.upload(req.file.path, {
-        folder: "Pinvent App",
+        folder: "Inventory-App",
         resource_type: "image",
       });
     } catch (error) {
@@ -45,6 +45,7 @@ const createProduct = asyncHandler(async (req, res) => {
     quantity,
     price,
     description,
+    tags,
     image: fileData,
   });
 
@@ -92,7 +93,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 // Update Product
 const updateProduct = asyncHandler(async (req, res) => {
-  const { name, category, quantity, price, description } = req.body;
+  const { name, category, quantity, price, description, tags } = req.body;
   const { id } = req.params;
 
   const product = await Product.findById(id);
@@ -107,6 +108,12 @@ const updateProduct = asyncHandler(async (req, res) => {
     res.status(401);
     throw new Error("User not authorized");
   }
+  
+  
+
+
+
+
 
   // Handle Image upload
   let fileData = {};
@@ -115,7 +122,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     let uploadedFile;
     try {
       uploadedFile = await cloudinary.uploader.upload(req.file.path, {
-        folder: "Pinvent App",
+        folder: "Inventory-1 App",
         resource_type: "image",
       });
     } catch (error) {
@@ -140,6 +147,7 @@ const updateProduct = asyncHandler(async (req, res) => {
       quantity,
       price,
       description,
+      tags,
       image: Object.keys(fileData).length === 0 ? product?.image : fileData,
     },
     {

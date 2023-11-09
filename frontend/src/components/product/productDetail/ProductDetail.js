@@ -76,6 +76,10 @@ const ProductDetail = () => {
               <b>&rarr; Total Value in stock : </b> {"$"}
               {product.price * product.quantity}
             </p>
+            <p>
+              <b>&rarr; Tags : </b> {""}
+              { product.tags}
+            </p>
             <hr />
             <div
               dangerouslySetInnerHTML={{

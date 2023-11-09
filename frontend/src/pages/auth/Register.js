@@ -16,6 +16,15 @@ const initialState = {
   password2: "",
 };
 
+const googleAuth = () => {
+  window.open(
+    `${process.env.REACT_APP_BACKEND_URL}/auth/google/callback`,
+    "self"
+  );
+}
+
+
+
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -108,6 +117,13 @@ const Register = () => {
             <button type="submit" className="--btn --btn-primary --btn-block">
               Register
             </button>
+            <br/>
+            <button type="submit" className="--btn --btn-primary --btn-block" 
+              onClick={googleAuth}
+              >
+              Sign Up with Google
+            </button>
+
           </form>
 
           <span className={styles.register}>

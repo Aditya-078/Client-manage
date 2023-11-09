@@ -12,8 +12,13 @@ const filterSlice = createSlice({
       const { products, search } = action.payload;
       const tempProducts = products.filter(
         (product) =>
-          product.name.toLowerCase().includes(search.toLowerCase()) ||
-          product.category.toLowerCase().includes(search.toLowerCase())
+        
+        product.name.toLowerCase().includes(search.toLowerCase()) ||
+        product.category.toLowerCase().includes(search.toLowerCase()) ||
+        product.quantity.toLowerCase().includes(search.toLowerCase()) ||
+        product.tags?.includes(search)
+
+
       );
 
       state.filteredProducts = tempProducts;

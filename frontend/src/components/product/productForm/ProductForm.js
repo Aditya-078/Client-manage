@@ -6,6 +6,7 @@ import Card from "../../card/Card";
 import "./ProductForm.scss";
 
 const ProductForm = ({
+  
   product,
   productImage,
   imagePreview,
@@ -81,6 +82,14 @@ const ProductForm = ({
             onChange={setDescription}
             modules={ProductForm.modules}
             formats={ProductForm.formats}
+          />
+          <label>Tags:</label>
+          <input
+            type="text"
+            placeholder="Tags for search engine"
+            name="tags"
+            value={product?.tags}
+            onChange={handleInputChange}
           />
 
           <div className="--my">

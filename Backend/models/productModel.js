@@ -38,10 +38,17 @@ const productSchema = mongoose.Schema(
       required: [true, "Please add a description"],
       trim: true,
     },
+    tags: {
+      type: String,
+      required: [true, "Please add atleast one keyword"],
+      trim: true,
+
+    },
     image: {
       type: Object,
       default: {},
     },
+    
   },
   {
     timestamps: true,

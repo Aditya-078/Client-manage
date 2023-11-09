@@ -8,11 +8,41 @@ import { toast } from "react-toastify";
 import { loginUser, validateEmail } from "../../services/authService";
 import { SET_LOGIN, SET_NAME } from "../../redux/features/auth/authSlice";
 import Loader from "../../components/loader/Loader";
+import { GoogleLogin } from 'react-google-login'
+import { useAuth0 } from "@auth0/auth0-react";
+
+
+
+const clientId = "228975307873-ffn5klsj71qf2r0ie4b3pv67bigo8pqa.apps.googleusercontent.com"
+
+const onSuccess = (res) => {
+  
+  console.log("LOGIN SUCCESS! Current user: ",res.profileObj)
+ 
+  
+  
+}
+
+
+
+
+
+
+
+ 
+
+const onFailure = (res) => {
+  console.log("LOGIN FAILED: ",res)
+}
 
 const initialState = {
   email: "",
   password: "",
 };
+
+
+
+
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -20,12 +50,13 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setformData] = useState(initialState);
   const { email, password } = formData;
-
+  
+  const { loginWithRedirect } = useAuth0();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setformData({ ...formData, [name]: value });
   };
-
+  
   const login = async (e) => {
     e.preventDefault();
 
@@ -53,6 +84,9 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+
+  const {user,  isAuthenticated} = useAuth0()
+
 
   return (
     <div className={`container ${styles.auth}`}>
@@ -84,6 +118,24 @@ const Login = () => {
             <button type="submit" className="--btn --btn-primary --btn-block">
               Login
             </button>
+            <br/>
+            
+            <GoogleLogin 
+            type="submit"
+            className="--btn --btn-primary --btn-block"
+            color="primary"
+              clientId={clientId}
+              buttonText="Login"
+              onSuccess={onSuccess}
+              onFailure={onFailure}
+              cookiePolicy={'single_host_origin'}
+              isSignedIn={true}                          
+            />
+             <br/>
+             <br/>
+             
+            
+          
           </form>
           <Link to="/forgot">Forgot Password</Link>
 
@@ -94,7 +146,13 @@ const Login = () => {
           </span>
         </div>
       </Card>
+
+      
+
+
     </div>
+
+    
   );
 };
 

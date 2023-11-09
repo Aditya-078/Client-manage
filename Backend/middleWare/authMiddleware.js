@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
+const errorHandler = require("./errorMiddleware");
 
 const protect = asyncHandler(async (req, res, next) => {
   try {
@@ -26,5 +27,10 @@ const protect = asyncHandler(async (req, res, next) => {
     throw new Error("Not authorized, please login");
   }
 });
+
+
+
+
+
 
 module.exports = protect;

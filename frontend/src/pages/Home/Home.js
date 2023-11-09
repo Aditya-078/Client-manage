@@ -4,8 +4,20 @@ import { Link } from "react-router-dom";
 import "./Home.scss";
 import heroImg from "../../assets/inv-img.png";
 import { ShowOnLogin, ShowOnLogout } from "../../components/protect/HiddenLink";
+import { useAuth0 } from "@auth0/auth0-react";
+
+
+
+
 
 const Home = () => {
+
+  const { loginWithRedirect } = useAuth0();
+  const {user,  isAuthenticated} = useAuth0()
+
+
+
+
   return (
     <div className="home">
       <nav className="container --flex-between ">
@@ -24,6 +36,10 @@ const Home = () => {
               <button className="--btn --btn-primary">
                 <Link to="/login">Login</Link>
               </button>
+            </li>
+
+            <li>
+            
             </li>
           </ShowOnLogout>
           <ShowOnLogin>
@@ -45,7 +61,7 @@ const Home = () => {
           </p>
           <div className="hero-buttons">
             <button className="--btn --btn-secondary">
-              <Link to="/dashboard">Free Trial 1 Month</Link>
+              <Link to="/dashboard">Subsciption</Link>
             </button>
           </div>
           <div className="--flex-start">

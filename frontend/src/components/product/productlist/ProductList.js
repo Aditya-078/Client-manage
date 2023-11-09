@@ -109,13 +109,14 @@ const ProductList = ({ products, isLoading }) => {
                   <th>Price</th>
                   <th>Quantity</th>
                   <th>Value</th>
+                  <th>Tags</th>
                   <th>Action</th>
                 </tr>
               </thead>
 
               <tbody>
                 {currentItems.map((product, index) => {
-                  const { _id, name, category, price, quantity } = product;
+                  const { _id, name, category, price, quantity, tags } = product;
                   return (
                     <tr key={_id}>
                       <td>{index + 1}</td>
@@ -129,6 +130,9 @@ const ProductList = ({ products, isLoading }) => {
                       <td>
                         {"₹"}
                         {price * quantity}
+                      </td>
+                      <td>
+                        <p>{tags}</p>
                       </td>
                       <td className="icons">
                         <span>
@@ -149,6 +153,7 @@ const ProductList = ({ products, isLoading }) => {
                           />
                         </span>
                       </td>
+                      
                     </tr>
                   );
                 })}
